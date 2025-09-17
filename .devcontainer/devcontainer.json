@@ -1,0 +1,35 @@
+{
+  "name": "Full-stack App Devcontainer",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "runArgs": [
+    "--add-host=host.docker.internal:host-gateway"
+  ],
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "22.19"
+    },
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.11"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "python.linting.pylintEnabled": true,
+        "editor.formatOnSave": true
+      }
+    }
+  },
+  "forwardPorts": [8000, 5173],
+  "postCreateCommand": "bash .devcontainer/post-create.sh"
+}
