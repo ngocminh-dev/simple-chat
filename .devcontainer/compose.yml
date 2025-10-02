@@ -1,0 +1,23 @@
+services:
+  queue:
+    tmpfs:
+      - /var/lib/rabbitmq
+  py:
+    container_name: py-template-dev
+    build:
+      dockerfile: .devcontainer/Dockerfile
+    image: py-template
+    volumes:
+      # assign tmp/caching folder for dev container to host,
+      # reduce time and increase performance when we need to rebuild container
+      - ~/tmp:/workspace/local/tmp
+      # support builtin dev container git client with ssh
+      - ~/.ssh:/home/vscode/.ssh:ro
+      - .:/workspace
+    command: sleep infinity
+    env_file: .env
+    depends_on:
+      - queue
+      - postgres
+    networks:
+      - py-net

@@ -1,0 +1,44 @@
+name: py-template
+
+services:
+  postgres:
+    container_name: py-template-pg
+    image: postgres:14-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${PGUSER:-pg}
+      POSTGRES_PASSWORD: ${PGPASSWORD:-pg}
+      POSTGRES_DB: ${PGDATABASE:-}
+    healthcheck:
+      start_period: 5s
+      test: "pg_isready"
+    volumes:
+      - py-pg:/var/lib/postgresql/data
+    networks:
+      - py-net
+
+  queue:
+    image: rabbitmq:3-alpine
+    restart: unless-stopped
+
+  frontend:
+    container_name: py-template-frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: npm run dev -- --host
+    ports:
+      - "5173:5173"
+    networks:
+      - py-net
+    depends_on:
+      - queue
+      - postgres
+networks:
+  py-net:
+
+volumes:
+  py-pg:

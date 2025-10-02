@@ -1,35 +1,114 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/python
 {
-  "name": "Full-stack App Devcontainer",
-  "build": {
-    "dockerfile": "Dockerfile",
-    "context": ".."
-  },
-  "runArgs": [
-    "--add-host=host.docker.internal:host-gateway"
-  ],
+  "name": "Py Template",
+
+  // Features to add to the dev container. More info: https://containers.dev/features.
   "features": {
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+      "version": "latest",
+      "enableNonRootDocker": true,
+      "moby": false
+    },
     "ghcr.io/devcontainers/features/node:1": {
-      "version": "22.19"
+      "nodeGypDependencies": true,
+      "version": "lts",
+      "pnpmVersion": "none"
     },
     "ghcr.io/devcontainers/features/python:1": {
       "version": "3.11"
+    },
+    "ghcr.io/devcontainers-extra/features/poetry:2": {
+      "version": "latest"
     }
   },
+
+  // Use 'forwardPorts' to make a list of ports inside the container available locally.
+  // "forwardPorts": [],
+
+  // Use 'postCreateCommand' to run commands after the container is created.
+  // Preserve internal terminal command history across devcontainer rebuilds to enable command autocompletion.
+  "postCreateCommand": ".devcontainer/post-cmd.sh",
+
+  // Configure tool-specific properties.
   "customizations": {
     "vscode": {
       "extensions": [
-        "ms-python.python",
-        "ms-python.vscode-pylance",
         "esbenp.prettier-vscode",
-        "dbaeumer.vscode-eslint"
+        "ms-python.python",
+        "ms-python.black-formatter",
+        "ms-python.pylint",
+        "ms-python.isort",
+        "ms-python.flake8"
       ],
       "settings": {
-        "python.defaultInterpreterPath": "/usr/local/bin/python",
-        "python.linting.pylintEnabled": true,
-        "editor.formatOnSave": true
+        "editor.formatOnSave": true,
+        "python.languageServer": "Pylance",
+        "editor.codeActionsOnSave": {
+          "source.organizeImports": "explicit",
+          "source.fixAll": "explicit"
+        },
+        "python.analysis.autoImportCompletions": true,
+        "python.analysis.typeCheckingMode": "basic",
+        "python.analysis.autoFormatStrings": true,
+        "python.analysis.gotoDefinitionInStringLiteral": true,
+        "python.analysis.inlayHints.callArgumentNames": "partial",
+        "python.analysis.inlayHints.functionReturnTypes": true,
+        "python.analysis.inlayHints.pytestParameters": true,
+        "python.analysis.inlayHints.variableTypes": true,
+        "python.terminal.activateEnvInCurrentTerminal": true,
+        "python.testing.pytestEnabled": true,
+        "python.analysis.indexing": true,
+        "python.analysis.packageIndexDepths": [
+          { "name": "", "depth": 10, "includeAllSymbols": true }
+        ],
+        "[python]": {
+          "editor.insertSpaces": true,
+          "editor.defaultFormatter": "ms-python.black-formatter"
+        },
+        "[json]": {
+          "editor.wordWrap": "off",
+          "editor.defaultFormatter": "esbenp.prettier-vscode",
+          "editor.quickSuggestions": { "strings": true }
+        },
+        "[jsonc]": {
+          "editor.wordWrap": "off",
+          "editor.defaultFormatter": "esbenp.prettier-vscode",
+          "editor.quickSuggestions": { "strings": true }
+        },
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "isort.check": true,
+        "isort.args": ["--profile=black"],
+        "python.defaultInterpreterPath": "/opt/venv/bin/python",
+        "black-formatter.args": ["--line-length=88"],
+        "editor.detectIndentation": false,
+        "files.trimTrailingWhitespace": true,
+        "black-formatter.importStrategy": "fromEnvironment",
+        "python.analysis.autoSearchPaths": true,
+        "python.analysis.importFormat": "absolute",
+        "prettier.singleQuote": false,
+        "pylint.importStrategy": "fromEnvironment",
+        "pylint.args": [
+          "--rcfile=.pylintrc",
+          "--django-settings-module=config.settings.dev"
+        ],
+        "isort.importStrategy": "fromEnvironment",
+        "flake8.args": ["--config=.flake8"],
+        "flake8.importStrategy": "fromEnvironment",
+        "python.venvPath": ".venv",
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        "terminal.integrated.cwd": "."
       }
     }
   },
-  "forwardPorts": [8000, 5173],
-  "postCreateCommand": "bash .devcontainer/post-create.sh"
+
+  // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+  // "remoteUser": "root"
+
+  "dockerComposeFile": ["../compose.yml", "./compose.yml"],
+  "service": "py",
+  "workspaceFolder": "/workspace",
+  "containerEnv": {
+    "HOST_PWD": "${localWorkspaceFolder}"
+  }
 }
