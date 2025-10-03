@@ -13,6 +13,11 @@ router = APIRouter(prefix="/chat", tags=["Chat"])
 # -----------------
 
 
+@router.get("/test")
+def test():
+    return {"message": "Hello World"}
+
+
 @router.post("/conversations", response_model=schema.ConversationRead)
 def create_conversation(convo: schema.ConversationCreate, db: DB):
     return crud.conversation.create(db, obj_in=convo)
@@ -75,7 +80,6 @@ async def chat_ws(websocket: WebSocket, conversation_id: int, db: DB):
                     conversation_id=conversation_id,
                 ),
             )
-
             await websocket.send_json(
                 {
                     "sender": "user",
@@ -84,7 +88,6 @@ async def chat_ws(websocket: WebSocket, conversation_id: int, db: DB):
                     "partial": False,
                 }
             )
-
             # Stream AI response
             collected = ""
             async for token in service.stream_ai_response(msg_data["content"]):
@@ -96,7 +99,6 @@ async def chat_ws(websocket: WebSocket, conversation_id: int, db: DB):
                         "partial": True,
                     }
                 )
-
             # Save final AI message
             ai_msg = crud.message.create(
                 db,

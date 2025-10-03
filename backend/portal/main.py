@@ -8,9 +8,8 @@ from .modules.user.router import router as user_router
 
 app = FastAPI()
 
-# Cấu hình CORS
 origins = [
-    "http://localhost:5173",  # frontend vite
+    "http://localhost:5173",
     "http://127.0.0.1:5173",
 ]
 

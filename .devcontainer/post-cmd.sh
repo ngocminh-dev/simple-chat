@@ -12,6 +12,6 @@ cd  /workspace/backend \
     && poetry install
 
 cd /workspace/frontend \
-    && npm install
+    && npm install  --no-cache-dir --user --upgrade
 
 echo FINISHED
